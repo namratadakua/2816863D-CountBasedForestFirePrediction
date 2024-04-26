@@ -1,13 +1,7 @@
 import pandas as pd
-import numpy as np
 import logging
-import statsmodels.api as sm
-from data_models import MapCoordinates
-from data_models import RowRange
-from data_models import ColumnRange
-from data_models import GridCell
-from data_models import get_row_range
-from data_models import get_col_range
+from final_data_models import MapCoordinates
+
 
 column_names = ['fire_latitude',
                 'fire_longitude',
@@ -88,7 +82,7 @@ def prepare_model_data(grid):
                 logging.debug(f"{row}:{column} row completed with count - {grid_cell.fire_count} ")
         if row % 100 == 0:
             print(f"grid {row} row completed")
-    model_df.to_csv('poisson_regression_model_data_6.csv')
+    model_df.to_csv('./dataset/final_model_data.csv')
     return model_df
 
 
