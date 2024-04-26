@@ -6,6 +6,8 @@ from final_data_models import get_col_range
 from final_load_data_functions import get_mapped_fire_data
 
 
+# This function exports the grid cell data in csv file
+# It creates multiple csv files each having cells for 1000 rows
 def export_grid_grouped(grid):
     map_coordinates = MapCoordinates()
     grid_rows = []
@@ -35,6 +37,7 @@ def export_grid_grouped(grid):
     result_df.to_csv(f"./gridExport/export_grid_{count}.csv", index=False)
 
 
+# This function assigns the fire occurrence to respective cell along with climate data.
 def set_fire_count(grid, row_ranges, column_ranges):
     all_data = get_mapped_fire_data()
     logging.basicConfig(filename='set_fire_count.log', level=logging.DEBUG,
