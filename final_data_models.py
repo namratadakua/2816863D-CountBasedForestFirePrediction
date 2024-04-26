@@ -1,6 +1,8 @@
 import numpy as np
 
 
+# This function finds out the smaller range for a longitude
+# so that row number in the grid can be identified with fewer iteration
 def get_row_range(longitude, row_ranges):
     map_coords = MapCoordinates()
     lower_row_limit = 0
@@ -31,6 +33,8 @@ def get_row_range(longitude, row_ranges):
     return lower_row_limit, upper_row_limit
 
 
+# This function finds out the smaller range for a latitude
+# so that column number in the grid can be identified with fewer iteration
 def get_col_range(latitude, column_ranges):
     map_coords = MapCoordinates()
     lower_col_limit = 0
@@ -81,7 +85,12 @@ class FirePoint:
     def __repr__(self):
         return f"FirePoint( latitude = {self.latitude},  longitude = {self.longitude})"
 
-
+# Grid Cell holds the information of 1x1km cell
+# upper longitude, lower longitude
+# upper latitude, lower latitude
+# number of fire count
+# list of climate data which are considered as fire ignitions
+# list of climate data which are not considered as fire ignitions
 class GridCell:
     """ This class holds the coordinates - start and end of latitude and longitude """
 
@@ -98,6 +107,9 @@ class GridCell:
         return f"GridCell( llat = {self.llat},  ulat = {self.ulat}, llon = {self.llon}, ulon = {self.ulon}, fire_count = {self.fire_count}, fire_points_length = {len(self.fire_points)})"
 
 
+# This class holds the Canada map information
+# Latitude and Longitude
+# Number of meridians and parallels when the map is divided in 1x1km grid
 class MapCoordinates:
     def __init__(self):
         self.llon = -142
@@ -111,7 +123,10 @@ class MapCoordinates:
         self.meridians_length = len(self.meridians)  # x-axis - longitude
         self.parallels_length = len(self.parallels)  # y-axis - latitude
 
-
+# Grid information
+# It holds the Grid in a matrix information
+# Number of rows = number of meridians
+# Number of columns = number of parallels
 class FireDataGrid:
     def __init__(self):
         map_coordinates = MapCoordinates()
