@@ -1,5 +1,7 @@
 #### https://github.com/namratadakua/2816863D-CountBasedForestFirePrediction/tree/main
 
+### The implementation of dataset count is done in python and model implementation is in R programming.
+
 ## Follow below steps to
 
 ###  &nbsp;&nbsp;&nbsp;&nbsp; 1. Download historical fire data
@@ -22,3 +24,6 @@
 
 ### &nbsp;&nbsp;&nbsp;&nbsp; 7. model implementation
 #### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Execute model_validation.R
+
+## Plots for Grid
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Execute final_study-area-plot.ipynb
