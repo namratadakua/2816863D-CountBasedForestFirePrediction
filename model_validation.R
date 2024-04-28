@@ -25,7 +25,7 @@ prep_train_test_data <- function(){
   model_data$soil_type <- sapply(model_data$soil_type, floor)
   model_data$soil_type <- factor(model_data$soil_type)
   
-  # Set the desired test set size (e.g., 20% for test)
+  # Set the desired test set size (e.g., 30% for test)
   test_size <- 0.3
   
   # Get the number of rows in your data
@@ -57,7 +57,7 @@ general_poisson_model_impl <- function(train_data, test_data) {
   
   gp_coefficients <- apply(gp_coefficients, 2, round, digits = 3)
   
-  write.csv(gp_coefficients, '/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/gp_result_sampled_factored_6.csv')
+  write.csv(gp_coefficients, './dataset/result/gp_result_sampled_factored.csv')
   
   return (general_poisson_model)
 }
@@ -71,7 +71,7 @@ quasi_poisson_model_log_link_impl <- function(train_data, test_data){
   
   qp_coefficients <- coef(summary(quasi_poisson_model))
   qp_coefficients <- apply(qp_coefficients, 2, round, digits = 3)
-  write.csv(qp_coefficients, '/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/qp_result_sampled_factored_log_6.csv')
+  write.csv(qp_coefficients, './dataset/result/qp_result_sampled_factored_log.csv')
   
   return (quasi_poisson_model)
 }
@@ -84,7 +84,7 @@ quasi_poisson_model_sqrt_link_impl <- function(train_data, test_data){
   
   qp_coefficients <- coef(summary(quasi_poisson_model))
   qp_coefficients <- apply(qp_coefficients, 2, round, digits = 3)
-  write.csv(qp_coefficients, '/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/qp_result_sampled_factored_sqrt_6.csv')
+  write.csv(qp_coefficients, './dataset/result/qp_result_sampled_factored_sqrt.csv')
   
   return (quasi_poisson_model)
 }
@@ -104,13 +104,13 @@ negative_binomial_model_impl <- function(train_data, test_data){
   
   nb_coefficients <- apply(nb_coefficients, 2, round, digits = 3)
   
-  write.csv(nb_coefficients, '/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/nb_result_sampled_factored_6.csv')
+  write.csv(nb_coefficients, './dataset/result/nb_result_sampled_factored.csv')
   
   return (negative_binomial_model)
 }
 
 plot_model_residual <- function(model, file_name){
-  png(paste("/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/",file_name), width = 800, height = 600)
+  png(paste("./dataset/result/",file_name), width = 800, height = 600)
   # Diagnostic plots
   par(mfrow = c(2, 2))  # Set up a 2x2 layout for the plots
   
@@ -190,11 +190,7 @@ model_validation <- function(){
   quasi_poisson_log_model <- quasi_poisson_model_log_link_impl(data$train_data, data$test_data)
   quasi_poisson_sqrt_model <- quasi_poisson_model_sqrt_link_impl(data$train_data, data$test_data)
   negative_binomial_model <- negative_binomial_model_impl(data$train_data, data$test_data)
-  # Print the RMSE
-  #print(paste("Poisson Regression RMSE: ", gp_rmse))
-  #print(paste("Quasi-Poisson RMSE: ", qp_rmse))
-  #print(paste("Negative binomial Regression RMSE: ", nb_rmse))
-  
+
   return (list(data = data, 
                general_poisson_model = general_poisson_model,
                quasi_poisson_log_model = quasi_poisson_log_model,
@@ -203,8 +199,6 @@ model_validation <- function(){
                ))
 }
 
-
-
 all_models <- model_validation()
 summary(all_models$general_poisson_model)
 summary(all_models$quasi_poisson_log_model)
@@ -212,36 +206,29 @@ summary(all_models$quasi_poisson_sqrt_model)
 summary(all_models$negative_binomial_model)
 
 
-saveRDS(all_models$general_poisson_model, file = "/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/general_poisson_model.RData")
-saveRDS(all_models$quasi_poisson_log_model, file = "/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/quasi_poisson_log_model.RData")
-saveRDS(all_models$quasi_poisson_sqrt_model, file = "/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/quasi_poisson_sqrt_model.RData")
-saveRDS(all_models$negative_binomial_model, file = "/Users/namratadakua/PycharmProjects/pythonProject/implementation/results/final/negative_binomial_model.RData")
+#saveRDS(all_models$general_poisson_model, file = "./dataset/result/general_poisson_model.RData")
+#saveRDS(all_models$quasi_poisson_log_model, file = "./dataset/result/final/quasi_poisson_log_model.RData")
+#saveRDS(all_models$quasi_poisson_sqrt_model, file = "./dataset/result/quasi_poisson_sqrt_model.RData")
+#saveRDS(all_models$negative_binomial_model, file = "./dataset/result/final/negative_binomial_model.RData")
 
-################################ CROSS-TAB plot - (START) #################################
+################################ CROSS-TAB plot for Quasi-Poisson test prediction vs actual - (START) #################################
 
 test_data <- all_models$data$test_data
-gp_model_predictions <- predict(all_models$general_poisson_model, newdata = test_data)
-test_data <- test_data %>% mutate(gp_predicted_count = gp_model_predictions)
 
 qp_model_predictions <- predict(all_models$quasi_poisson_sqrt_model, newdata = test_data)
 test_data <- test_data %>% mutate(qp_predicted_count = qp_model_predictions)
 
-nb_model_predictions <- predict(all_models$negative_binomial_model, newdata = test_data)
-test_data <- test_data %>% mutate(nb_predicted_count = nb_model_predictions)
-
-
-#### poisson regression plot ####
-gp_df_long <- test_data %>%
+qp_df_long <- test_data %>%
   pivot_longer(cols = c(number_of_fire, qp_predicted_count), 
                names_to = "variable", values_to = "count")
 
 # Create cross-tabulation
-gp_cross_tab <- gp_df_long %>%
+qp_cross_tab <- qp_df_long %>%
   group_by(month, variable) %>%
   summarise(count = sum(count))
 
 # Plot cross-tabulation
-ggplot(gp_cross_tab, aes(x = month, y = count, fill = variable)) +
+ggplot(qp_cross_tab, aes(x = month, y = count, fill = variable)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_fill_manual(values = c("number_of_fire" = rgb(231, 125, 114, maxColorValue = 255), 
                                "qp_predicted_count" = rgb(86, 188, 194, maxColorValue = 255)), 
